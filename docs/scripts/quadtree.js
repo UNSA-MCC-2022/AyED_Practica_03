@@ -12,16 +12,20 @@ class Rectangle {
         this.y = y;
         this.w = w; // half width
         this.h = h; // half height
+        this.left = x - w / 2;
+        this.right = x + w / 2;
+        this.top = y - h / 2;
+        this.bottom = y + h / 2;
     }
 
     // verifica si este objeto contiene un objeto Punto
     contains(point) {
-
+      return (this.left <= point.x && point.x <= this.right && this.top <= point.y && point.y <= this.bottom);
     }
 
     // verifica si este objeto se intersecta con otro objeto Rectangle
     intersects(range) {
-
+      return !(this.right < range.left || range.right < this.left || this.bottom < range.top || range.bottom < this.top);
     }
 }
 
@@ -47,6 +51,12 @@ class QuadTree {
         // this.southwest = qt_southwest;
 
         // 3.- Hacer: this.divided <- true
+        this.northeast = new QuadTree(this.boundary.subdivide('qt_northeast'), this.capacity);
+        this.northwest = new QuadTree(this.boundary.subdivide('qt_northwest'), this.capacity);
+        this.southeast = new QuadTree(this.boundary.subdivide('qt_southeast'), this.capacity);
+        this.southwest = new QuadTree(this.boundary.subdivide('qt_southwest'), this.capacity);
+    
+        this.divided = true; 
     }
 
     insert(point) {
@@ -62,6 +72,20 @@ class QuadTree {
         // this.northwest.insert ( point );
         // this.southeast.insert ( point );
         // this.southwest.insert ( point );
+        if (!this.boundary.contains(point)) {
+          return false;
+        }
+    
+        if (!this.divided) {
+          if (this.points.length < this.capacity) {
+            this.points.push(point);
+            return true;
+          }
+    
+          this.subdivide();
+        }
+    
+        return (this.northeast.insert(point) || this.northwest.insert(point) || this.southeast.insert(point) || this.southwest.insert(point));
 
     }
 
