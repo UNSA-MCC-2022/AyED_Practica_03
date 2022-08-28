@@ -5,9 +5,71 @@
     <script src="scripts/p5.min.js"> </script>
     <script src="scripts/quadtree.js"> </script>
     <script src="scripts/sketch.js"> </script>
+
+    <style>
+        body{
+            font-family: Ubuntu, Arial, 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+
+		.grid-container {
+			display: grid;
+			grid-template-columns: auto auto auto;
+			padding: 5px;
+		}
+
+		.grid-container>div {
+			text-align: center;
+			padding: 5px 0;
+		}
+
+		.btn_link {
+			color: white;
+			font-size: 16px;
+			background: #3498db;
+			padding: 10px 10px 10px 10px;
+			text-decoration: none;
+		}
+
+		.btn_link:hover {
+			background: #3cb0fd;
+			text-decoration: none;
+		}
+	</style>
 </head>
 
 <body>
+
+    <div class="grid-container">
+		<div class="grid-item" style="vertical-align: middle;">
+			<img id="logoUnsa" src="img/logo_unsa.jpg" width="200" alt="UNSA">
+		</div>
+		<div class="grid-item">
+			<p style="font-size: 18px;font-weight: bold;">
+				Universidad Nacional de San Agust&iacute;n<br />
+				Maestr&iacute;a en Ciencias de la Computaci&oacute;n<br />
+				Algoritmos y Estructura de Datos<br />
+			</p>
+		</div>
+		<div class="grid-item">
+			<p style="font-size: 18px;font-weight: bold;">
+                Grupo 09<br />
+                Pr&aacute;ctica 03<br />
+			</p>
+        </div>
+
+		<div class="grid-item">&nbsp;</div>
+		<div class="grid-item"><div id="QuadTreeCanvas"></div></div>
+		<div class="grid-item">&nbsp;</div>
+		<!-- <div class="grid-item">&nbsp;4</div>
+		<div class="grid-item">&nbsp;5</div>
+		<div class="grid-item">&nbsp;6</div>
+		<div class="grid-item">&nbsp;7</div>
+		<div class="grid-item">&nbsp;8</div>
+		<div class="grid-item">&nbsp;9</div> -->
+	</div>
+
+
+
 </body>
 
 </html>
