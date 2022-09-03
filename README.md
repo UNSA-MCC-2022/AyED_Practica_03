@@ -272,7 +272,7 @@
 <p align=center>
   <img style="border:1px solid black;" src="https://github.com/UNSA-MCC-2022/AyED_Practica_03/blob/main/images/Figura_04.png" alt="UNSA" width="80%"/>
   <br />
-  Figura 3: Implementación de búsqueda (Query)
+  Figura 4: Implementación de búsqueda (Query)
 </p>
 
 https://unsa-mcc-2022.github.io/AyED_Practica_03/index.html
@@ -282,6 +282,11 @@ https://unsa-mcc-2022.github.io/AyED_Practica_03/index.html
 *Ejemplo en funcionamiento*
 https://unsa-mcc-2022.github.io/AyED_Practica_03/octree.html
 
+<p align=center>
+  <img style="border:1px solid black;" src="https://github.com/UNSA-MCC-2022/AyED_Practica_03/blob/main/images/Figura_05.png" alt="UNSA" width="80%"/>
+  <br />
+  Figura 5: Implementación Octree
+</p>
 
 ```javascript
 
