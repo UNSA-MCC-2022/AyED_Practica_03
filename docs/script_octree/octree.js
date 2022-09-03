@@ -11,7 +11,7 @@
 	this.parent_node = parent;
 	this.children_nodes = new Array();
 
-	this._all_entities = new Array();	// {entity, node}, TODO: verifique si hay una manera de convertirlo en una entidad de mapa-> nodo
+	this._all_entities = new Array();
 	this._to_update = parent === null ? new Array() : parent._to_update;
 	this._leaves = new Array();
 	this._leaves.push(this);
@@ -26,7 +26,7 @@
 			_this._to_update.push(entity);
 	}
 
-	// representación visual con fines de depuración
+	// grafico visual/depuración
 	var geo = new THREE.CubeGeometry( halfwidth*2, halfheight*2, halfdepth*2 );
 	
 	this.mesh = new THREE.Mesh( geo, new THREE.MeshBasicMaterial( { color: 0x0, opacity: 1, wireframe: true } ) );
@@ -170,7 +170,7 @@ Octree.prototype.subdivide = function() {
 		|   0  |  1   | |7|      /
 		|_____ |_____ |/|/       z
 		|   2  |  3   | /
-		|_____ |_____ |/ (lol)
+		|_____ |_____ |/ 
 	*/
 
 	if(this.depth >= this.max_depth)
@@ -355,7 +355,7 @@ Octree.prototype.update = function() {
 			if(node._all_entities.length === 1 && (node._all_entities[0])[1] !== node)
 			{
 				// if the entity was in a one of the child, put it in current node
-                //si la entidad estavo en uno de los hijos, colocarlo en el nodo actual
+                //si la entidad esta en uno de los hijos, colocarlo en el nodo actual
 				node._all_entities[0][1] = node;	// actualizará esta referencia para el nodo de los padres también
 				node.add(node._all_entities[0][0]);
 			}
