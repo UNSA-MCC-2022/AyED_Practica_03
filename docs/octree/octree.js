@@ -165,7 +165,7 @@ class Octree {
     }
 }
 
-
+/*
 a = new Point(0,0,0);
 b = new Point(10,10,10);
 c = new Box(a,b);
@@ -174,7 +174,7 @@ d = new Point(3,3,3);
 e = new Point(4,4,4);
 f = new Point(5,5,5);
 g  = new Point(6,6,6);
-ot.insert(d);
-ot.insert(e);
-ot.insert(f);
-ot.insert(g);
+ot.insert(d);*/
+//ot.insert(e);
+//ot.insert(f);
+//ot.insert(g);

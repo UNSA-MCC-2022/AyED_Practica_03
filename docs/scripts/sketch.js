@@ -27,7 +27,7 @@ function setup() {
 
     console.log(qt);
 
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 500; i++) {
         let p = new Point(random(width), random(height));
         qt.insert(p);
     }
@@ -36,18 +36,18 @@ function setup() {
 }
 
 // Dibujar puntos con Mouse [Punto 6]
-// function draw() {
-//     background(0);
-//     if (mouseIsPressed) {
-//         for (let i = 0; i < 1; i++) {
-//             let m = new Point(mouseX + random(-5, 5), mouseY + random(-5,5));
-//             console.log(m);
-//             qt.insert(m);
-//         }
-//     }
-//     qt.show();
-// }
-
+/*function draw() {
+    background(0);
+    if (mouseIsPressed) {
+        for (let i = 0; i < 1; i++) {
+            let m = new Point(mouseX + random(-5, 5), mouseY + random(-5,5));
+            console.log(m);
+            qt.insert(m);
+        }
+    }
+    qt.show();
+}
+*/
 function draw() {
     background(0);
     qt.show();
@@ -58,6 +58,7 @@ function draw() {
     //let points = [];
     //qt.query (range , points );
     let points = qt.query(range);
+    //console.log(points);
     for (let p of points) {
         strokeWeight(6);
         point(p.x, p.y);

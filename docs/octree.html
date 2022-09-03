@@ -4,6 +4,7 @@
 		<title>Ejemplo de Octree</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
 		<script src="script_octree/three.min.js"></script>
 		<script src="script_octree/stats.min.js"></script>
 		<script src="script_octree/octree.js"></script>
@@ -94,7 +95,7 @@
 				octree = new Octree(null, new THREE.Vector3(0,0,0), dim.x, dim.y, dim.z);
 				scene.add(octree.mesh);
 
-				for(var i = 0; i < 100; i++)
+				for(var i = 0; i < 500; i++)
 				{
 					var sphere = createSphere((Math.random()-0.5)*dim.x*2, (Math.random()-0.5)*dim.y*2, (Math.random()-0.5)*dim.z*2);
 					
