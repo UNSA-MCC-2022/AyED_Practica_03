@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Octree</title>
+    <style>
+        body { margin: 0; }
+
+        button {
+        /* Variables */
+        --button_radius: 0.75em;
+        --button_color: #e8e8e8;
+        --button_outline_color: #000000;
+        font-size: 17px;
+        font-weight: bold;
+        border: none;
+        border-radius: var(--button_radius);
+        background: var(--button_outline_color);
+        }
+
+        .button_top {
+        display: block;
+        box-sizing: border-box;
+        border: 2px solid var(--button_outline_color);
+        border-radius: var(--button_radius);
+        padding: 0.75em 1.5em;
+        background: var(--button_color);
+        color: var(--button_outline_color);
+        transform: translateY(-0.2em);
+        transition: transform 0.1s ease;
+        }
+
+        button:hover .button_top {
+        /* Pull the button upwards when hovered */
+        transform: translateY(-0.33em);
+        }
+
+        button:active .button_top {
+        /* Push the button downwards when pressed */
+        transform: translateY(0);
+        }
+
+
+        #controls{
+            position: fixed;
+            display: inline;
+            height: 100px;
+            bottom: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+
+        }
+
+        #controls button{
+            display: inline;
+        }
+    </style>
+    <script type="text/javascript" src="js/octree.js"></script>
+    <script src="js/three.js"></script>
+    <script src="js/OrbitControls.js"></script>
+</head>
+<body>
+    <div id="controls">
+        <button onclick="agregar()" class="button_top">+</button>
+    </div>
+    <script>
+
+        const limit = 40;
+        const total = limit * 2;
+        const maxPoints = 6;
+        function agregar () {
+            while(scene.children.length > 0){ 
+                removeObject3D(scene.children[0]);
+            }
+            
+            tree.insert( new Point( Math.random() * total - limit , Math.random() * total - limit , Math.random() * total - limit ) );
+
+            draw( tree , 1 );
+            analizeChildren( tree.subTrees , 2 );
+
+        }
+        
+        function animate () {
+            requestAnimationFrame( animate );
+
+            controls.update();
+            renderer.render( scene, camera );
+        };
+
+        function draw ( tree , level ) {
+            let min = tree.boundary.min;
+            let max = tree.boundary.max;
+            let vertices = [];
+
+            vertices.push( max.x, max.y, max.z );
+            vertices.push( min.x, max.y, max.z ); // 0, 1
+
+            vertices.push( min.x, max.y, max.z );
+            vertices.push( min.x, min.y, max.z ); // 1, 2
+
+            vertices.push( min.x, min.y, max.z );
+            vertices.push( max.x, min.y, max.z ); // 2, 3
+
+            vertices.push( max.x, min.y, max.z );
+            vertices.push( max.x, max.y, max.z ); // 3, 0
+
+            vertices.push( max.x, max.y, min.z );
+            vertices.push( min.x, max.y, min.z ); // 4, 5
+
+            vertices.push( min.x, max.y, min.z );
+            vertices.push( min.x, min.y, min.z ); // 5, 6
+
+            vertices.push( min.x, min.y, min.z );
+            vertices.push( max.x, min.y, min.z ); // 6, 7
+
+            vertices.push( max.x, min.y, min.z );
+            vertices.push( max.x, max.y, min.z ); // 7, 4
+
+            vertices.push( max.x, max.y, max.z );
+            vertices.push( max.x, max.y, min.z ); // 0, 4
+
+            vertices.push( min.x, max.y, max.z );
+            vertices.push( min.x, max.y, min.z ); // 1, 5
+
+            vertices.push( min.x, min.y, max.z );
+            vertices.push( min.x, min.y, min.z ); // 2, 6
+
+            vertices.push( max.x, min.y, max.z );
+            vertices.push( max.x, min.y, min.z ); // 3, 7
+        
+            const geometry = new THREE.BufferGeometry();
+            let color    = getRandomColor();
+            if ( tree.color != null )
+                color = tree.color
+            else
+                tree.color = color
+            geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+            const segment = new THREE.LineSegments(geometry,new THREE.LineBasicMaterial( {
+                color: "lightblue",
+                linewidth: 2,
+                toneMapped: false,
+                linecap: 'round', //ignored by WebGLRenderer
+                linejoin:  'round' //ignored by WebGLRe derer
+            } ));
+            
+            scene.add( segment );
+
+            let points = tree.points;
+            for ( let i = 0 ; i < points.length ; i++) {
+                const geometry = new THREE.SphereGeometry( 0.5, 16, 16 );
+                const material = new THREE.MeshBasicMaterial( { color: color } );
+                const sphere = new THREE.Mesh( geometry, material );
+                sphere.position.x = points[ i ].x;
+                sphere.position.y = points[ i ].y;
+                sphere.position.z = points[ i ].z;
+                scene.add( sphere );
+            }
+        }
+
+        function analizeChildren ( children , level ) {
+            for ( let i = 0 ; i < children.length ; i++) {
+                let child   = children[ i ];
+                draw( child , level );
+                analizeChildren( child.subTrees , level + 1 );
+            }
+        }
+
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        function removeObject3D(object3D) {
+            if (!(object3D instanceof THREE.Object3D)) return false;
+
+            // for better memory management and performance
+            if (object3D.geometry) object3D.geometry.dispose();
+
+            if (object3D.material) {
+                if (object3D.material instanceof Array) {
+                    // for better memory management and performance
+                    object3D.material.forEach(material => material.dispose());
+                } else {
+                    // for better memory management and performance
+                    object3D.material.dispose();
+                }
+            }
+            object3D.removeFromParent(); // the parent might be the scene or another Object3D, but it is sure to be removed this way
+            return true;
+        }
+
+
+
+
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias:true });
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        document.body.appendChild( renderer.domElement );
+
+        const controls = new OrbitControls( camera, renderer.domElement );
+
+        camera.position.z = total;
+
+
+        let min = new Point( -limit , -limit , -limit );
+        let max = new Point( limit , limit , limit );
+        let box = new Box( min , max );
+        let tree = new Octree( box , maxPoints);
+        tree.insert(new Point(1,1,1));
+        // tree.insert(new Point(1,2,3));
+        // tree.insert(new Point(1,3,3));
+        // tree.insert(new Point(10,1,1));
+        // tree.insert(new Point(1,12,-13));
+        // tree.insert(new Point(1,13,1));
+        // tree.insert(new Point(11,1,1));
+        // tree.insert(new Point(1,1,-11));
+        // tree.insert(new Point(1,13,-20));
+        // tree.insert(new Point(1,-1,-12));
+        // tree.insert(new Point(-13,11,13));
+        // tree.insert(new Point(-12,-12,-12));
+
+
+        draw( tree , 1 );
+        analizeChildren( tree.subTrees , 2 );
+
+
+        controls.update();
+        animate();
+    </script>
+</body>
+</html>
