@@ -1,11 +1,12 @@
 
+
 <img src="https://github.com/UNSA-MCC-2022/MCC_Algoritmos_2022/blob/main/logo_unsa.jpg" alt="UNSA" width="30%"/>
 
 ### Universidad Nacional de San Agustín <br/> Maestría en Ciencia de la Computación <br/>  Algoritmos y Estructura de Datos
 <hr/>
 
 
-# Practica 03
+# Practica 04
 
 | DOCENTE | CARRERA | CURSO |
 | :-: | :-: | :-: |
@@ -14,7 +15,7 @@
 
 | PRÁCTICA | TEMA | DURACIÓN |
 | :-: | :-: | :-: |
-| 03 | Quadtree / Octree | 3 horas
+| 04 | KD Tree | 3 horas
 
 ## 1. Datos de los estudiantes
 - Asmat Fuentes, Franz Rogger
@@ -30,9 +31,9 @@
             <html>
             
             <head>
-                <title> QuadTree </title>
+                <title> KD Tree </title>
                 <script src="scripts/p5.min.js"> </script>
-                <script src="scripts/quadtree.js"> </script>
+                <script src="scripts/kdtree.js"> </script>
                 <script src="scripts/sketch.js"> </script>
 
                 <style>
@@ -65,7 +66,7 @@
             		</div>
             		<div class="grid-item">
             			<p style="font-size: 18px;font-weight: bold;">
-                            Pr&aacute;ctica 03
+                            Pr&aacute;ctica 04
             			</p>
                     </div>
             		<div class="grid-item">&nbsp;</div>
@@ -77,609 +78,525 @@
 
 ```
         
-2.2. En el archivo _quadtree.js_ digitemos el siguiente código, además debe completar las funciones _contains_ e _intersects_ (ambas funciones devuelven _true_ o _false_).
-        
-```javascript
-            
-            contains(point) {
-                return (point.x >= this.x - this.w && 
-                        point.x <= this.x + this.w && 
-                        point.y >= this.y - this.h && 
-                        point.y <= this.y + this.h );
-            }
-            
-            intersects(range) {
-                return !(range.x - range.w > this.x + this.w || 
-                         range.x + range.w < this.x - this.w || 
-                         range.y - range.h > this.y + this.h || 
-                         range.y + range.h < this.y - this.h);
-            }
-            
-```
-        
-2.3. En el archivo _quadtree.js_ digitemos el siguiente código y complete las funciones _subdivide_ e _insert_.
-        
-```javascript
+2.2. Cree un archivo _kdtree.js_.
 
-            subdivide() {
-                let x = this.boundary.x;
-                let y = this.boundary.y;
-                let w = this.boundary.w;
-                let h = this.boundary.h;
-                let qt_northeast = new Rectangle(x + w / 2, y - h / 2, w / 2, h / 2);
-                let qt_northwest = new Rectangle(x - w / 2, y - h / 2, w / 2, h / 2);
-                let qt_southeast = new Rectangle(x + w / 2, y + h / 2, w / 2, h / 2);
-                let qt_southwest = new Rectangle(x - w / 2, y + h / 2, w / 2, h / 2);
-                this.northeast = new QuadTree(qt_northeast, this.capacity);
-                this.northwest = new QuadTree(qt_northwest, this.capacity);
-                this.southeast = new QuadTree(qt_southeast, this.capacity);
-                this.southwest = new QuadTree(qt_southwest, this.capacity);
-                this.divided = true;
-            }
-
-            insert(point) {
-                if (!this.boundary.contains(point)){
-                    return false;
-                }
-        
-                if (this.points.length < this.capacity) {
-                    this.points.push(point);
-                    return true;
-                } 
-                else {
-                    if(!this.divided){                
-                        this.subdivide();                
-                    }
-                    return (
-                        this.northeast.insert(point) ||
-                        this.northwest.insert(point) ||
-                        this.southeast.insert(point) ||
-                        this.southwest.insert(point)
-                      );
-                }
-            }
-```
-        
-2.4. Editemos el archivo _sketch.js_. En este archivo estamos creando un QuadTree de tamaño 400x400 con 3 puntos. Ejecute (obentrá un resultado similar a la Figura 1)
-        
 ```javascript
-            
-            function setup() {
-                let quadCanvas = createCanvas(400, 400);
-                quadCanvas.parent("QuadTreeCanvas");
-                let boundary = new Rectangle(200, 200, 200, 200);
-                qt = new QuadTree(boundary, 4);
-            
-                console.log(qt);
-                for (let i = 0; i < 3; i++) {
-                    let p = new Point(Math.random() * 400, Math.random() * 400);
-                    qt.insert(p);
-                }
-            
-                background(0);
-                qt.show();
-            }
-            
+  k = 2;
+  
+  class Node {
+    constructor (point , axis ){
+      this.point = point;
+      this.left = null;
+      this.right = null;
+      this.axis = axis;
+    }
+  }
+  
+  function getHeight ( node ) { }
+  function generate_dot ( node ) { }
+  function build_kdtree ( points , depth = 0) { }
 ```
 
-<p align=center>
-  <img style="border:1px solid black;" src="https://github.com/UNSA-MCC-2022/AyED_Practica_03/blob/main/images/Figura_01.png" alt="UNSA" width="80%"/>
-  <br />
-  Figura 1: Resultado de insertar tres (3) puntos
-</p>
-        
-2.5. Abra las opciones de desarrollador (opciones / más herramientas / opciones de desarrollador) de su navegador para visualizar la console (Figura 2).
-        
-<p align=center>
-  <img style="border:1px solid black;" src="https://github.com/UNSA-MCC-2022/AyED_Practica_03/blob/main/images/Figura_02.png" alt="UNSA" width="80%"/>
-  <br />
-  Figura 2: Visualización de herramientas de desarrollo
-</p>
-        
-2.6. Edite el archivo _sketch.js_ con el siguiente código. En este caso, nos da la posibilidad de insertar los puntos con el mouse.
-        
+**Complete las funciones:**
+
+- **build kdtree:** Construye el KD-Tree y retorna el nodo raiz.
+    
 ```javascript
+function build_kdtree(points, depth = 0) {
+	var n = points.length;
+	var axis = depth % k;
 
-        function draw() {
-            background(0);
-            if (mouseIsPressed) {
-                for (let i = 0; i < 1; i++) {
-                    let m = new Point(mouseX + random(-5, 5), mouseY + random(-5,5));
-                    console.log(m);
-                    qt.insert(m);
-                }
-            }
-            qt.show();
-        }
-        
-```
-
-<p align=center>
-  <img style="border:1px solid black;" src="https://github.com/UNSA-MCC-2022/AyED_Practica_03/blob/main/images/Figura_03.png" alt="UNSA" width="80%"/>
-  <br />
-  Figura 3: Quadtree, inserción de puntos con mouse
-</p>
-        
-2.7. Edite el archivo _quadtree.js_ y complete la función query.
-        
-```javascript
-        
-        query(range, found){    
-            if(!found){
-                found=[];
-            }
-            if(!this.boundary.intersects(range)){
-                return found;
-            }
-            else{
-              for(let point of this.points){
-                if(range.contains(point)){
-                    found.push(point)
-                }
-              }
-              if(this.divided){            
-                this.northeast.query(range,found);
-                this.northwest.query(range,found);
-                this.southeast.query(range,found);
-                this.southwest.query(range,found);
-              } 
-              return found;
-            }
-        }
-        
-```
-        
-2.8. Editemos el archivo _sketch.js_, En este caso haremos consultas con el mouse
-        
-```javascript
-        
-        let qt;
-        let count = 0;
-        
-        function setup () {
-            createCanvas (400 ,400);
-            let boundary = new Rectangle (200, 200, 200, 200);
-            qt = new QuadTree (boundary , 4);
-            
-            console.log (qt);
-            for (let i=0; i < 25; i ++) {
-                let p = new Point (Math.random () * 400 , Math.random () * 400);
-                qt.insert (p);
-            }
-            background (0);
-            qt.show ();
-        }
-        
-        function draw () {
-            background (0);
-            qt.show ();
-            
-            stroke (0 ,255 ,0);
-            rectMode (CENTER);
-            let range = new Rectangle (mouseX, mouseY, 50, 50);
-            rect (range.x, range.y, range.w * 2, range.h * 2);
-            let points = [];
-            qt.query (range, points);
-            
-            for (let p of points) {
-                strokeWeight (4);
-                point (p.x, p.y);
-            }
-        }
-
-```
-        
-<p align=center>
-  <img style="border:1px solid black;" src="https://github.com/UNSA-MCC-2022/AyED_Practica_03/blob/main/images/Figura_04.png" alt="UNSA" width="80%"/>
-  <br />
-  Figura 4: Implementación de búsqueda (Query)
-</p>
-
-https://unsa-mcc-2022.github.io/AyED_Practica_03/index.html
-        
-2.9. Finalmente, debe implementar un _Octree_ y visualizarlo. Puede utilizar cualquier lenguaje de programación.
-
-*Ejemplo en funcionamiento*
-https://unsa-mcc-2022.github.io/AyED_Practica_03/octree.html
-
-<p align=center>
-  <img style="border:1px solid black;" src="https://github.com/UNSA-MCC-2022/AyED_Practica_03/blob/main/images/Figura_05.png" alt="UNSA" width="80%"/>
-  <br />
-  Figura 5: Implementación Octree
-</p>
-
-```javascript
-
- function Octree(parent, origin, halfwidth, halfheight, halfdepth) {
-	this.origin = origin;
-	this.halfwidth = halfwidth;
-	this.halfheight = halfheight;
-	this.halfdepth = halfdepth;
-
-	this.depth = parent === null ? 0 : parent.depth + 1;
-
-	this.entities = new Array();	
-
-	this.parent_node = parent;
-	this.children_nodes = new Array();
-
-	this._all_entities = new Array();	// {entity, node}, TODO: verifique si hay una manera de convertirlo en una entidad de mapa-> nodo
-	this._to_update = parent === null ? new Array() : parent._to_update;
-	this._leaves = new Array();
-	this._leaves.push(this);
-
-	this._need_leaves_update = false;
-	this._need_all_entities_update = false;
-
-	var _this = this;
-
-	this.onEntityPoseChanged = function(entity) {
-		if(_this._to_update.indexOf(entity) === -1)
-			_this._to_update.push(entity);
+	if (n <= 0) {
+		return  null;
 	}
 
-	// representación visual con fines de depuración
-	var geo = new THREE.CubeGeometry( halfwidth*2, halfheight*2, halfdepth*2 );
-	
-	this.mesh = new THREE.Mesh( geo, new THREE.MeshBasicMaterial( { color: 0x0, opacity: 1, wireframe: true } ) );
-	this.mesh.position = origin.clone();
-
-	if(parent !== null)
-	{
-		this.mesh.position.sub(parent.origin);
-		parent.mesh.add(this.mesh);
-	}
-	//
-}
-
-Octree.prototype.constructor = Octree;
-
-Octree.prototype.entities_per_node = 1;
-Octree.prototype.max_depth = 5;
-
-Octree.prototype.add = function(entity) {
-
-	var _this = this;
-	function addToThis() {
-		var iter = _this;
-		while(iter !== null)
-		{
-			iter._need_all_entities_update = true;
-			iter = iter.parent_node;
-		}
-		_this.entities.push(entity);
-		_this.mesh.visible = true;
+	if (n == 1) {
+		return  new Node(points[0], axis)
 	}
 
-	if(!this.intersects(entity))
-		return;
-
-	if(this.depth >= this.max_depth)
-	{
-		addToThis();
-	}
-	else if(this.children_nodes.length == 0)
-	{
-		if(this.entities.length < this.entities_per_node)
-		{
-			addToThis();
-		}	
-		else
-		{	
-			this.subdivide();
-
-			if( this.entities.length !== 0 ) 
-			{
-				var entities_tmp = this.entities.slice();
-				this.entities.length = 0;
-				while(entities_tmp.length > 0)
-				{
-					var ent = entities_tmp.pop();
-					this.remove(ent);
-					this.add(ent);
-				}
-			}
-
-			this.add(entity);
-		}
-			
-	}
-	else
-	{
-		// verificar si el obb se cruza (intersects) con varios hijos
-		var child_id = -1;
-		var multiple_intersect = false;
-		for(var i = 0; i < this.children_nodes.length; i++)
-		{
-			if(this.children_nodes[i].intersects(entity))
-			{
-				if(child_id != -1)
-				{
-					multiple_intersect = true;
-					break;
-				}
-				child_id = i;
-			}
-		}
-
-		if(multiple_intersect)
-		{
-			addToThis();
-		}
-		else
-			this.children_nodes[child_id].add(entity);
-	}
-};
-
-Octree.prototype.remove = function(entity) {
-	for(var i = 0; i < this.entities.length; i++ )
-	{
-		if(this.entities[i] === entity)
-		{
-			this.entities.splice(i, 1);
-			break;
-		}		
-	}
-
-	var iter = this;
-	while(iter !== null)
-	{
-		iter._need_all_entities_update = true;
-		iter = iter.parent_node;
-	}
-};
-
-Octree.prototype.empty = function(){
-	if(this.entities.length > 0)
-		return false;
-
-	for(var i = 0; i < this.children_nodes.length; i++)
-	{
-		if(!this.children_nodes[i].empty())
-			return false;
-	}
-	return true;
-};
-
-Octree.prototype.intersects = function(entity) {
-	return this.contains(entity.position);
-};
-
-Octree.prototype.contains = function(point) {
-	var diff = new THREE.Vector3();
-	diff.subVectors( point, this.origin );
-
-	return Math.abs(diff.x) <= this.halfwidth && Math.abs(diff.y) <= this.halfheight && Math.abs(diff.z) <= this.halfdepth;
-};
-
-Octree.prototype.subdivide = function() {
-
-	/*       _____________
-		   /  4   /  5   /|        y
-		  /_____ /______/ |        |
-	     /      /      /| |        |___ x
-		/_____ / _____/ |/|       / 
-		|   0  |  1   | |7|      /
-		|_____ |_____ |/|/       z
-		|   2  |  3   | /
-		|_____ |_____ |/ (lol)
-	*/
-
-	if(this.depth >= this.max_depth)
-		return;
-
-	this.needLeavesUpdate();
-
-	var qwidth = this.halfwidth / 2;
-	var qheight = this.halfheight / 2;
-	var qdepth = this.halfdepth / 2;
-
-	this.children_nodes[0] = new Octree( this, new THREE.Vector3( this.origin.x - qwidth, 
-													  this.origin.y + qheight, 
-													  this.origin.z + qdepth ),
-								   qwidth, qheight, qdepth);
-
-	this.children_nodes[1] = new Octree( this, new THREE.Vector3( this.origin.x + qwidth, 
-													  this.origin.y + qheight, 
-													  this.origin.z + qdepth ),
-								   qwidth, qheight, qdepth);
-
-	this.children_nodes[2] = new Octree( this, new THREE.Vector3( this.origin.x - qwidth, 
-													  this.origin.y - qheight, 
-													  this.origin.z + qdepth ),
-								   qwidth, qheight, qdepth);
-
-	this.children_nodes[3] = new Octree( this, new THREE.Vector3( this.origin.x + qwidth, 
-													  this.origin.y - qheight, 
-													  this.origin.z + qdepth ),
-								   qwidth, qheight, qdepth);
-
-	this.children_nodes[4] = new Octree( this, new THREE.Vector3( this.origin.x - qwidth, 
-													  this.origin.y + qheight, 
-													  this.origin.z - qdepth ),
-								   qwidth, qheight, qdepth);
-
-	this.children_nodes[5] = new Octree( this, new THREE.Vector3( this.origin.x + qwidth, 
-													  this.origin.y + qheight, 
-													  this.origin.z - qdepth ),
-								   qwidth, qheight, qdepth);
-
-	this.children_nodes[6] = new Octree( this, new THREE.Vector3( this.origin.x - qwidth, 
-													  this.origin.y - qheight, 
-													  this.origin.z - qdepth ),
-								   qwidth, qheight, qdepth);
-
-	this.children_nodes[7] = new Octree( this, new THREE.Vector3( this.origin.x + qwidth, 
-													  this.origin.y - qheight, 
-													  this.origin.z - qdepth ),
-								   qwidth, qheight, qdepth);
-};
-
-// conteo de la máxima intersección de hijos.
-Octree.prototype.countChildrenIntersections = function(max, entity) {
-	var children_idx = new Array();
-	for(var j = 0; j < this.children_nodes.length; j++)
-	{
-		if(this.children_nodes[j].intersects(entity))
-			children_idx.push(j);
-		if(children_idx.length === max)
-			break;
-	}
-	return children_idx;
-}
-
-Octree.prototype.needLeavesUpdate = function() {
-	var iter = this;
-	while(iter !== null)
-	{
-		iter._need_leaves_update = true;
-		iter = iter.parent_node;
-	}
-}
-
-// actualiza la referencia de las entidades hijas 
-Octree.prototype.updateChildrenEntities = function() {
-	if(this._need_all_entities_update)
-	{
-		this._all_entities.length = 0;
-		for(var i = 0; i < this.children_nodes.length; i++)
-		{
-			this.children_nodes[i].updateChildrenEntities();
-			this._all_entities = this._all_entities.concat(this.children_nodes[i]._all_entities);
-		}
-
-		for(var i = 0; i < this.entities.length; i++)
-		{
-			this._all_entities.push([this.entities[i], this]);
-		}
-	}
-}
-
-// actualiza los hojas (leaves) de referencia
-Octree.prototype.updateLeaves = function() {
-	if(this._need_leaves_update)
-	{
-		this._leaves.length = 0;
-		for(var i = 0; i < this.children_nodes.length; i++)
-		{
-			
-			this.children_nodes[i].updateLeaves();
-			this._leaves = this._leaves.concat(this.children_nodes[i]._leaves);
-		}
-
-		if(this.children_nodes.length === 0)
-			this._leaves.push(this);
-
-		this._need_leaves_update = false;
-	}
-}
-
-Octree.prototype.update = function() {
-
-	var _this = this;
-	_this.updateChildrenEntities();
-	var entities_tmp = this._all_entities.slice();
-	entities_tmp.forEach( function(element) {
-		var entity = element[0];
-		
-		for(var i = 0; i < _this._to_update.length; i++)
-		{
-			if( entity === _this._to_update[i] )
-			{
-				var octree;
-				var intersections;
-
-                // comprueba si hay intersección múltiple con hijos
-                // si es así, haga lo mismo recursivamente con los padres hasta que podamos ajustarlo por completo
-                // en un nodo y agregarlo a este nodo
-				octree = element[1];
-				while(octree !== null)
-				{
-					intersections = octree.countChildrenIntersections(2, entity);
-					
-					if(intersections.length === 1)
-					{
-						// no realice ninguna operación si no se requiere ninguna actualización
-						if(element[1] === octree.children_nodes[intersections[0]])
-							break;
-						element[1].remove(entity);
-						octree.children_nodes[intersections[0]].add(entity);
-						break;
-					}
-					else if(octree.parent_node === null && intersections.length > 0) 
-					{
-						element[1].remove(entity);
-						octree.add(entity);
-						break;
-					}
-					else
-						octree = octree.parent_node;
-				}
-				_this._to_update.splice(i,1);
-				break;
-			}
-		}
+	var median = Math.floor(points.length / 2);
+	points.sort(function (a, b) {
+		return a[axis] - b[axis];
 	});
 
-	// actualiza todas las matrices _all_entities
-	_this.updateChildrenEntities();
+	var left = points.slice(0, median);
+	var right = points.slice(median + 1);
+	var node = new Node(points[median].slice(0, k), axis);
+	node.left = build_kdtree(left, depth + 1);
+	node.right = build_kdtree(right, depth + 1);
  
-	_this.updateLeaves();
+	return node;
+}
+```
+- **getHeight:** Retorna la altura del arbolt.
+```javascript
+function getHeight(node) {
+	if (node == null)
+		return  0;
+	
+	return max(1 + getHeight(node.left), 1 + getHeight(node.right));
+}
+```
+- **generate dot:** Genera al árbol en formato dot
+```javascript
+function generate_dot(node) {
+	var cad = '';
+	if(node == null)
+		return  '';
 
-	function pruneUp(node) {
-		if(node._all_entities.length <= 1)
-		{			
-            // remueve a los hijos de la matriz(leaves) y separe su malla de los padres
-			(function removeChildrenNodes(node) {
-				for(var i = 0; i < node.children_nodes.length; i++)
-				{
-					removeChildrenNodes(node.children_nodes[i]);
-					var idx = _this._leaves.indexOf(node.children_nodes[i]);
-					if( idx !== -1 )
-						_this._leaves.splice(idx, 1);
-					node.mesh.remove(node.children_nodes[i].mesh);
-				}
-			})(node);
+	if(node.left != null)
+	{
+		cad = cad + '"' + node.point.toString() + "\"";
+		cad = cad + " -> " + '"' + node.left.point.toString() + '"' + ";" + "\n";
+	}
+	if(node.right != null)
+	{
+		cad = cad + "\"" + node.point.toString() + "\"";
+		cad = cad + " -> " + '"' + node.right.point.toString() + '"' + ";" + "\n";
+	}
+	return cad + generate_dot(node.left) + generate_dot(node.right);
+}
+```
 
-			node.needLeavesUpdate();
-			node.children_nodes.length = 0;
+2.3. Cree un archivo sketch.js y evalue sus resultados.
+        
+```javascript
 
-			if(node._all_entities.length === 1 && (node._all_entities[0])[1] !== node)
-			{
-				// if the entity was in a one of the child, put it in current node
-                //si la entidad estavo en uno de los hijos, colocarlo en el nodo actual
-				node._all_entities[0][1] = node;	// actualizará esta referencia para el nodo de los padres también
-				node.add(node._all_entities[0][0]);
-			}
-			if(node.parent_node !== null)
-			{
-				pruneUp(node.parent_node);
-			}	
+k = 2;
+class Node {
+	constructor(point, axis) {
+		this.point = point;
+		this.left = null;
+		this.right = null;
+		this.axis = axis;
+	}
+}
+function getHeight(node) {
+	if (node == null)
+		return 0;
+	return max(1 + getHeight(node.left), 1 + getHeight(node.right))
+}
+
+function generate_dot(node) { 
+    var cad = '';
+	if(node == null)
+		return '';
+
+	if(node.left!=null)
+	{
+		cad = cad + '"' + node.point.toString() + "\"";
+		cad = cad + " -> " + '"' + node.left.point.toString() + '"' + ";" + "\n";
+	}
+	if(node.right!=null)
+	{
+		cad = cad + "\"" + node.point.toString() + "\"";
+		cad = cad + " -> " + '"' + node.right.point.toString() + '"' + ";" + "\n";
+	}
+	return cad + generate_dot(node.left) + generate_dot(node.right);
+}
+
+function build_kdtree(points, depth = 0) {
+	var n = points.length;
+	var axis = depth % k;
+
+	if (n <= 0) {
+		return null;
+	}
+	if (n == 1) {
+		return new Node(points[0], axis)
+	}
+	var median = Math.floor(points.length / 2);
+
+	points.sort(function (a, b) {
+		return a[axis] - b[axis];
+	});
+
+	var left = points.slice(0, median);
+	var right = points.slice(median + 1);
+
+	var node = new Node(points[median].slice(0, k), axis);
+	node.left = build_kdtree(left, depth + 1);
+	node.right = build_kdtree(right, depth + 1);
+
+	return node;
+}
+
+function distanceSquared(point1, point2) {
+	var distance = 0;
+	for (var i = 0; i < k; i++)
+		distance += Math.pow((point1[i] - point2[i]), 2);
+	return Math.sqrt(distance);
+}
+//Pregunta 4
+function closest_point_brute_force ( points , point ) {
+    var PointCe = points[0];
+	var DistanceMin = distanceSquared(points[0], point);
+	for (var i = 1; i < points.length; i++) {
+		var t = distanceSquared(points[i], point);
+		if (DistanceMin > t) {
+			PointCe = points[i];
+			DistanceMin = t;
 		}
 	}
+	return PointCe;
+}
+function naive_closest_point(node, point, depth = 0, best = null) {
+	if (node != null) {
+		var dis = distanceSquared(node.point, point);
+		console.log(dis);
+		if (best != null && distanceSquared(best, point) < dis) {
+			return best;
+		}
+		else {
+			if (node.point[node.axis] > point[node.axis]) {
+				return naive_closest_point(node.left, point, depth + 1, node.point);
+			}
+			else {
+				return naive_closest_point(node.right, point, depth + 1, node.point);
+			}
+		}
+	}
+	else {
+		return best;
+	}
+}
+function closer_point(point, p1, p2) {
+	if (p2 == null) {
+		return p1;
+	}
+	var distance = distanceSquared(p1.point, point);
+	if (distance < distanceSquared(p2.point, point))
+		return p1;
+	return p2;
 
-	this._leaves.forEach( function(node){
-		pruneUp(node);
-	});	
-   };
+//Pregunta 7
+function closest_point(node, point, depth = 0) {
 
+	if (node === null)
+		return null;
+	var axis = depth % k;
+	var next_branch = null;
+	var opposite_branch = null;
+	if (point[axis] < node.point[axis]) {
+		next_branch = node.left;
+		opposite_branch = node.right;
+	} else {
+		next_branch = node.right;
+		opposite_branch = node.left;
+	}
+	var best = closer_point(point, node, closest_point(next_branch, point, depth + 1));
+	if (distanceSquared(point, best.point) > Math.abs(point[axis] - node.point[axis])) {
+		best = closer_point(point, best, closest_point(opposite_branch, point, depth + 1));
+	}
+
+	return best;
+}
+
+//Pregunta 8
+function KNN(points, point, K)
+{
+	var PointCe = [];
+	var Result = [];
+	var pointm=points[0];
+	for (var i = 0; i < points.length; i++) 
+	{
+		var aux=distanceSquared(points[i],point);
+		PointCe.push([aux,points[i]])
+		//console.log(PointCe[i])
+
+		PointCe.sort(function (a,b){
+			return a[0]-b[0];
+		});
+	}
+	for(var i = 0; i < PointCe.length; i++){
+		Result.push(PointCe[i].slice(1,2));
+	}
+	console.log(Result.slice(0, k))
+}
+
+var p = 0;
+//Pregunta 9
+function range_query_circle(node, center, radio, queue, depth = 0) {
+	if (node == null) {
+		return null;
+	}
+	p += 1;
+	console.log(p);
+	var axis = node.axis;
+	var next_branch = null;
+	var opposite_branch = null;
+	if (center[axis] < node.point[axis]) {
+		next_branch = node.left;
+		opposite_branch = node.right;
+	} else {
+		next_branch = node.right;
+		opposite_branch = node.left;
+	}
+	var best = closer_point(center, node, range_query_circle(next_branch, center, radio, queue, depth + 1));
+	if (Math.abs(center[axis] - node.point[axis]) <= radio || distanceSquared(center, best.point) > Math.abs(center[axis] - node.point[axis])) {
+		if (distanceSquared(center, node.point) <= radio) {
+			queue.push(node.point);
+		}
+		best = closer_point(center, best, range_query_circle(opposite_branch, center, radio, queue, depth + 1));
+	}
+
+	return best;
+}
+
+//pregunta 10
+function range_query_rect(node, center, hug, queue, depth = 0) {
+	if (node == null) {
+		return null;
+	}
+	p += 1;
+	console.log(p);
+	var axis = node.axis;
+	var next_branch = null;
+	var opposite_branch = null;
+	if (center[axis] < node.point[axis]) {
+		next_branch = node.left;
+		opposite_branch = node.right;
+	} else {
+		next_branch = node.right;
+		opposite_branch = node.left;
+	}
+	var best = closer_point(center, node, range_query_rect(next_branch, center, hug, queue, depth + 1));
+	if (Math.abs(center[axis] - node.point[axis]) <= hug[axis] * 2 || distanceSquared(center, best.point) > Math.abs(center[axis] - node.point[axis])) {
+		if (Math.abs(center[0] - node.point[0]) <= hug[0] && Math.abs(center[1] - node.point[1]) <= hug[1]) {
+			queue.push(node.point);
+		}
+		best = closer_point(center, best, range_query_rect(opposite_branch, center, hug, queue, depth + 1));
+	}
+
+	return best;
+}
+
+//pregunta 5
+var data = [
+    [40 ,70] ,
+    [70 ,130] ,
+    [90 ,40] ,
+    [110 , 100] ,
+    [140 ,110] ,
+    [160 , 100]
+];
+
+var point = [140 ,90]; // query
+
+//closest_point_brute_force ( data , point ) 
+//naive_closest_point  ( data , point ) 
+//fin pregunta 5
+
+//pregunta 6
+var data = [
+	[40 ,70] ,
+	[70 ,130] ,
+	[90 ,40] ,
+	[110 , 100] ,
+	[140 ,110] ,
+	[160 , 100] ,
+	[150 , 30]
+];
+
+var point = [140 ,90]; // query
+//closest_point_brute_force ( data , point ) 
+//naive_closest_point  ( data , point ) 
+//Fin pregunta 6
+
+```
+        
+2.4. Implemente la función closest point brute force y naive closest point
+        
+```javascript
+function closest_point_brute_force ( points , point ) {
+	var PointCe = points[0];
+	var DistanceMin = distanceSquared(points[0], point);
+	for (var i = 1; i < points.length; i++) {
+		var t = distanceSquared(points[i], point);
+		if (DistanceMin > t) {
+			PointCe = points[i];
+			DistanceMin = t;
+		}
+	}
+	return PointCe;
+}
+
+function naive_closest_point(node, point, depth = 0, best = null) {
+	if (node != null) {
+		var dis = distanceSquared(node.point, point);
+		console.log(dis);
+		if (best != null && distanceSquared(best, point) < dis) {
+			return best;
+		}
+		else {
+			if (node.point[node.axis] > point[node.axis]) {
+				return naive_closest_point(node.left, point, depth + 1, node.point);
+			}
+			else {
+				return naive_closest_point(node.right, point, depth + 1, node.point);
+			}
+		}
+	}
+	else {
+		return best;
+	}
+}
+```
+2.5. Evalue el resultado de las dos funciones implementadas anteriormente con este conjunto de datos:
+```javascript        
+var data = [
+	[40 ,70] ,
+	[70 ,130] ,
+	[90 ,40] ,
+	[110 , 100] ,
+	[140 ,110] ,
+	[160 , 100]
+];
+```
+        
+2.6. Evalue el resultado de las dos funciones implementadas anteriormente con este conjunto de datos
+        
+```javascript
+var data = [
+	[40 ,70] ,
+	[70 ,130] ,
+	[90 ,40] ,
+	[110 , 100] ,
+	[140 ,110] ,
+	[160 , 100] ,
+	[150 , 30]
+];
+var point = [140 ,90]; // query
+```
+       
+2.7. Ahora implemente la función closest point, siguiendo las recomendaciones dadas por el docente:
+        
+```javascript
+function closest_point(node, point, depth = 0) {
+	if (node === null)
+		return  null;
+
+	var axis = depth % k;
+	var next_branch = null;
+	var opposite_branch = null;
+
+	if (point[axis] < node.point[axis]) {
+		next_branch = node.left;
+		opposite_branch = node.right;
+	} else {
+		next_branch = node.right;
+		opposite_branch = node.left;
+	}
+
+	var best = closer_point(point, node, closest_point(next_branch, point, depth + 1));
+	if (distanceSquared(point, best.point) > Math.abs(point[axis] - node.point[axis])) {
+		best = closer_point(point, best, closest_point(opposite_branch, point, depth + 1));
+	}
+	return best;
+}      
+```
+        
+2.8. Averigue e implemente una funcion KNN, que retorna los k puntos mas cercanos a un punto.
+        
+```javascript
+function KNN(points, point, K) {
+	var PointCe = [];
+	var Result = [];
+	var pointm=points[0];
+
+	for (var i = 0; i < points.length; i++) {
+		var aux=distanceSquared(points[i],point);
+		PointCe.push([aux,points[i]])
+		//console.log(PointCe[i])
+		PointCe.sort(function (a, b){
+			return a[0] -  b[0];
+		});
+	}
+	for(var i = 0; i < PointCe.length; i++){
+		Result.push(PointCe[i].slice(1,2));
+	}
+	console.log(Result.slice(0, k))
+}
+```
+2.9. Implemente la función _range_query_circle_ del KD-Tree:
+``` javascript
+function range_query_circle(node, center, radio, queue, depth = 0) {
+	if (node == null) {
+		return  null;
+	}
+	p += 1;
+	console.log(p);
+	
+	var axis = node.axis;
+	var next_branch = null;
+	var opposite_branch = null;
+
+	if (center[axis] < node.point[axis]) {
+		next_branch = node.left;
+		opposite_branch = node.right;
+	} else {
+		next_branch = node.right;
+		opposite_branch = node.left;
+	}
+	var best = closer_point(center, node, range_query_circle(next_branch, center, radio, queue, depth + 1));
+	if (Math.abs(center[axis] - node.point[axis]) <= radio || distanceSquared(center, best.point) > Math.abs(center[axis] - node.point[axis])) {
+		if (distanceSquared(center, node.point) <= radio) {
+			queue.push(node.point);
+		}
+		best = closer_point(center, best, range_query_circle(opposite_branch, center, radio, queue, depth + 1));
+	}
+	return best;
+}
+```
+2.10. Implemente la función range query rec del KD-Tree, esta vez el range representa un rectángulo.
+``` javascript
+function range_query_rect(node, center, hug, queue, depth = 0) {
+	if (node == null) {
+		return  null;
+	}
+	p += 1;
+	console.log(p);
+
+	var axis = node.axis;
+	var next_branch = null;
+	var opposite_branch = null;
+	
+	if (center[axis] < node.point[axis]) {
+		next_branch = node.left;
+		opposite_branch = node.right;
+	} else {
+		next_branch = node.right;
+		opposite_branch = node.left;
+	}
+	
+	var best = closer_point(center, node, range_query_rect(next_branch, center, hug, queue, depth + 1));
+
+	if (Math.abs(center[axis] - node.point[axis]) <= hug[axis] * 2 || distanceSquared(center, best.point) > Math.abs(center[axis] - node.point[axis])) {
+		if (Math.abs(center[0] - node.point[0]) <= hug[0] && Math.abs(center[1] - node.point[1]) <= hug[1]) {
+			queue.push(node.point);
+		}
+
+		best = closer_point(center, best, range_query_rect(opposite_branch, center, hug, queue, depth + 1));
+	}
+	return best;
+}
 ```
 
 ## 3. Repositorio
 
 La implementación de los algoritmos y los datos utilizados es el siguiente:
 
-https://github.com/UNSA-MCC-2022/AyED_Practica_03
+https://github.com/UNSA-MCC-2022/AyED_Practica_04
 
 ## 4. Representación gráfica
 
 Se realizó la implementación de la representación gráfica de los algoritmos indicados, esto se pueden visualizar en el siguiente enlace:
 
-*Quadtree*
+*KD Tree*
 
-https://unsa-mcc-2022.github.io/AyED_Practica_03/index.html
+https://unsa-mcc-2022.github.io/AyED_Practica_04/index.html
 
-*Octree*
+*KD Tree Query*
 
-https://unsa-mcc-2022.github.io/AyED_Practica_03/octree.html
+https://unsa-mcc-2022.github.io/AyED_Practica_04/main.html
 
